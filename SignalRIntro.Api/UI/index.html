@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="./assets/css/v4-font-face.min.css?v2">
+    <link rel="stylesheet" href="./assets/css/fontawesome.min.css?v2">
+    <link rel="stylesheet" href="./assets/css/style.css?v31">
+    <script src="./assets/js/signalr.min.js"></script>
+	<script src="./assets/js/openidconnect.js"></script>
+	</script>
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+</head>
+
+<body onload="CheckPermission()">
+    <div id="usernameModal">
+        <div class="modal-content">
+            <h1><span>KB</span>Messenger</h1>
+        </div>
+    </div>
+    <div class="chat-box" style="display: none;">
+	
+			<div class="chat-header" title="King Behnam Messenger">
+				<span>KB</span>Messenger <em style="font-size:10px">v2.1.0</em><span id="user-data"></span>
+			</div>
+			<div style="display:flex; height: calc(100% - 70px);">
+			
+		<div class="chat-container">
+			<div class="chat-messages" id="messagesList">
+			</div>
+			<div class="chat-input" style="gap:4px">
+				<div style="flex:1; width: 80%;">
+					<div id="reply-msg"></div>
+					<input type="text" id="messageInput" placeholder="Type a message">
+					<ul class="list-emoji" id="list-emoji">
+					
+						<li>😀</li>
+						<li>😋</li>
+						<li>🤐</li>
+						<li>😌</li>
+						<li>😷</li>
+						<li>🤠</li>
+						<li>😎</li>
+						<li>😕</li>
+						<li>😤</li>
+						<li>💩</li>
+						<li>🥰</li>
+						<li>🤗</li>
+						<li>💋</li>
+						<li>🙈</li>
+						<li>🖐️</li>
+						<li>👍</li>
+						<li>👎</li>
+						<li>👊</li>
+					</ul>
+				</div>
+				<button id="sendButton"><i class="fa fa-paper-plane" ></i></button>
+				<!--
+				 <button onclick="startRecording()">Start Recording</button>
+				 -->
+			</div>
+		
+		</div>
+	
+		<div class="chat-user">
+			<div id="chat-user-me"></div>
+			<div id="settings-user" style="display:none">
+				<ul>
+				  <li><img onclick="setProfile(1)" src="./assets/avatar/users-1.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(2)" src="./assets/avatar/users-2.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(3)" src="./assets/avatar/users-3.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(4)" src="./assets/avatar/users-4.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(5)" src="./assets/avatar/users-5.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(6)" src="./assets/avatar/users-6.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(7)" src="./assets/avatar/users-7.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(8)" src="./assets/avatar/users-8.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(9)" src="./assets/avatar/users-9.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(10)" src="./assets/avatar/users-10.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(11)" src="./assets/avatar/users-11.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(12)" src="./assets/avatar/users-12.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(13)" src="./assets/avatar/users-13.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(14)" src="./assets/avatar/users-14.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(15)" src="./assets/avatar/users-15.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(16)" src="./assets/avatar/users-16.svg" alt="1" /></li>
+				</ul>
+		        <span onclick="logOut()"><i class="fa fa-sign-out"></i> logout</span>
+			</div>
+			<div id="chat-user-list"></div>
+		</div>
+			</div>
+			
+	</div>
+
+    <audio id="messageSound" src="./assets/sound/beep.mp3" preload="auto"></audio>
+
+    <script src="./assets/js/main.js?v11"></script>
+</body>
+
+</html>
