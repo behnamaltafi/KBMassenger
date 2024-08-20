@@ -7,11 +7,12 @@
     <title>Chat App</title>
     <link rel="stylesheet" href="./assets/css/v4-font-face.min.css?v2">
     <link rel="stylesheet" href="./assets/css/fontawesome.min.css?v2">
-    <link rel="stylesheet" href="./assets/css/style.css?v31">
+    <link rel="stylesheet" href="./assets/css/style.css?v48">
     <script src="./assets/js/signalr.min.js"></script>
 	<script src="./assets/js/openidconnect.js"></script>
 	</script>
-    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png?v1">
+    <meta name="theme-color" content="#ffffff">
 </head>
 
 <body onload="CheckPermission()">
@@ -23,7 +24,7 @@
     <div class="chat-box" style="display: none;">
 	
 			<div class="chat-header" title="King Behnam Messenger">
-				<span>KB</span>Messenger <em style="font-size:10px">v2.1.0</em><span id="user-data"></span>
+				<span>KB</span>Messenger <em style="font-size:10px">v3.3.0</em><span id="user-data"></span>
 			</div>
 			<div style="display:flex; height: calc(100% - 70px);">
 			
@@ -31,11 +32,12 @@
 			<div class="chat-messages" id="messagesList">
 			</div>
 			<div class="chat-input" style="gap:4px">
+				<span onclick="showEmojiList()" style="cursor:pointer">😀</span>
+				<span onclick="showStickerList()" style="cursor:pointer; margin: 0 10px;">S</span>
 				<div style="flex:1; width: 80%;">
 					<div id="reply-msg"></div>
 					<input type="text" id="messageInput" placeholder="Type a message">
-					<ul class="list-emoji" id="list-emoji">
-					
+					<ul class="list-emoji" id="list-emoji" style="display:none">
 						<li>😀</li>
 						<li>😋</li>
 						<li>🤐</li>
@@ -55,6 +57,23 @@
 						<li>👎</li>
 						<li>👊</li>
 					</ul>
+					<ul class="list-emoji" id="list-sticker" style="display:none">
+						<li><img onclick="sendValueText(':happy1:')" src="./assets/emoji/happy1.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':happy2:')" src="./assets/emoji/happy2.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':blink:')" src="./assets/emoji/blink.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':cry:')" src="./assets/emoji/cry.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':death:')" src="./assets/emoji/death.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':fear:')" src="./assets/emoji/fear.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':happy:')" src="./assets/emoji/happy.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':hi:')" src="./assets/emoji/hi.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':hug:')" src="./assets/emoji/hug.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':kiss:')" src="./assets/emoji/kiss.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':laugh:')" src="./assets/emoji/laugh.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':like:')" src="./assets/emoji/like.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':love:')" src="./assets/emoji/love.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':sleep:')" src="./assets/emoji/sleep.gif" alt="1" /></li>
+						<li><img onclick="sendValueText(':ya:')" src="./assets/emoji/ya.gif" alt="1" /></li>
+					</ul>
 				</div>
 				<button id="sendButton"><i class="fa fa-paper-plane" ></i></button>
 				<!--
@@ -68,22 +87,32 @@
 			<div id="chat-user-me"></div>
 			<div id="settings-user" style="display:none">
 				<ul>
-				  <li><img onclick="setProfile(1)" src="./assets/avatar/users-1.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(2)" src="./assets/avatar/users-2.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(3)" src="./assets/avatar/users-3.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(4)" src="./assets/avatar/users-4.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(5)" src="./assets/avatar/users-5.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(6)" src="./assets/avatar/users-6.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(7)" src="./assets/avatar/users-7.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(8)" src="./assets/avatar/users-8.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(9)" src="./assets/avatar/users-9.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(10)" src="./assets/avatar/users-10.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(11)" src="./assets/avatar/users-11.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(12)" src="./assets/avatar/users-12.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(13)" src="./assets/avatar/users-13.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(14)" src="./assets/avatar/users-14.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(15)" src="./assets/avatar/users-15.svg" alt="1" /></li>
-				  <li><img onclick="setProfile(16)" src="./assets/avatar/users-16.svg" alt="1" /></li>
+				  <li><img onclick="setProfile(1)" src="./assets/avatar/users-1.png" alt="1" /></li>
+				  <li><img onclick="setProfile(2)" src="./assets/avatar/users-2.png" alt="1" /></li>
+				  <li><img onclick="setProfile(3)" src="./assets/avatar/users-3.png" alt="1" /></li>
+				  <li><img onclick="setProfile(4)" src="./assets/avatar/users-4.png" alt="1" /></li>
+				  <li><img onclick="setProfile(5)" src="./assets/avatar/users-5.png" alt="1" /></li>
+				  <li><img onclick="setProfile(6)" src="./assets/avatar/users-6.png" alt="1" /></li>
+				  <li><img onclick="setProfile(7)" src="./assets/avatar/users-7.png" alt="1" /></li>
+				  <li><img onclick="setProfile(8)" src="./assets/avatar/users-8.png" alt="1" /></li>
+				  <li><img onclick="setProfile(9)" src="./assets/avatar/users-9.png" alt="1" /></li>
+				  <li><img onclick="setProfile(10)" src="./assets/avatar/users-10.png" alt="1" /></li>
+				  <li><img onclick="setProfile(11)" src="./assets/avatar/users-11.png" alt="1" /></li>
+				  <li><img onclick="setProfile(12)" src="./assets/avatar/users-12.png" alt="1" /></li>
+				  <li><img onclick="setProfile(13)" src="./assets/avatar/users-13.png" alt="1" /></li>
+				  <li><img onclick="setProfile(14)" src="./assets/avatar/users-14.png" alt="1" /></li>
+				  <li><img onclick="setProfile(15)" src="./assets/avatar/users-15.png" alt="1" /></li>
+				  <li><img onclick="setProfile(16)" src="./assets/avatar/users-16.png" alt="1" /></li>
+				  <li><img onclick="setProfile(17)" src="./assets/avatar/users-17.png" alt="1" /></li>
+				  <li><img onclick="setProfile(18)" src="./assets/avatar/users-18.png" alt="1" /></li>
+				  <li><img onclick="setProfile(19)" src="./assets/avatar/users-19.png" alt="1" /></li>
+				  <li><img onclick="setProfile(20)" src="./assets/avatar/users-20.png" alt="1" /></li>
+				  <li><img onclick="setProfile(21)" src="./assets/avatar/users-21.png" alt="1" /></li>
+				  <li><img onclick="setProfile(22)" src="./assets/avatar/users-22.png" alt="1" /></li>
+				  <li><img onclick="setProfile(23)" src="./assets/avatar/users-23.png" alt="1" /></li>
+				  <li><img onclick="setProfile(24)" src="./assets/avatar/users-24.png" alt="1" /></li>
+				  <li><img onclick="setProfile(25)" src="./assets/avatar/users-25.png" alt="1" /></li>
+				  <li><img onclick="setProfile(26)" src="./assets/avatar/users-26.png" alt="1" /></li>
 				</ul>
 		        <span onclick="logOut()"><i class="fa fa-sign-out"></i> logout</span>
 			</div>
@@ -95,7 +124,7 @@
 
     <audio id="messageSound" src="./assets/sound/beep.mp3" preload="auto"></audio>
 
-    <script src="./assets/js/main.js?v11"></script>
+    <script src="./assets/js/main.js?v16"></script>
 </body>
 
 </html>

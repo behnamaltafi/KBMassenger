@@ -6,6 +6,8 @@ var connection = null;
 var curentUser = null;
 var reply = null;
 var selectedMessage = null;
+var toggleId = null;
+var unreadMessage = 0;
 
 var clientInfo = {
 	client_id : 'KBMessenger',
@@ -161,7 +163,7 @@ function getColorForUsername(username) {
     // });
 function convertText(_text){
 	const _link = new RegExp(/(https?:\/\/[^\s]+)/g);
-	const _emojiList = ["happy","happy2","test","yeah"];
+	const _emojiList = ["happy1","happy2","test","yeah","blink","cry","death", "fear", "happy","hi","hug","kiss","laugh","like","love","sleep","ya"];
 	
 	_text = _text.replace(_link,`<a href="$1" target="_blank"> [${isRTL(_text) ? 'لینک' : 'link'}] </a>`);
 	
@@ -174,7 +176,7 @@ function convertText(_text){
     <source srcset="/assets/emoji/${_emojiList[i]}.svg" type="image/svg+xml">
     <source srcset="/assets/emoji/${_emojiList[i]}.png" type="image/png">
     <source srcset="/assets/emoji/${_emojiList[i]}.jpg" type="image/jpeg">
-    <img src="/assets/emoji/404.png" alt="${_emojiList[i]}" width="150">
+    <img src="/assets/emoji/404.png" alt="${_emojiList[i]}" width="120">
 </picture>`);
 		}
 	}
@@ -257,9 +259,14 @@ function sendMessage() {
         document.getElementById("messageInput").value = '';
     }
 }
+function sendValueText(_text){
+	document.getElementById("messageInput").value = _text;
+	sendMessage();
+}
 function UpdateStatus(event="") {
     connection.invoke("UpdateStatus", event).catch(err => console.error(err.toString()));
 }
+
 
 function checkUser(){
     if (connection) {
@@ -294,10 +301,9 @@ if(document.getElementById("messageInput")){
 const emojiList = document.getElementById('list-emoji');
 
 if (emojiList) {
-  // Select all li elements within the ul
+	
   const emojiItems = emojiList.getElementsByTagName('li');
 
-  // Iterate over each li element and add a click event listener
   Array.from(emojiItems).forEach((item) => {
     item.addEventListener('click', () => {
 		document.getElementById("messageInput").value += item.textContent;
@@ -344,7 +350,7 @@ function createUser(user={}, event="", status="") {
 	
 	const r= `
 	<div class="user-item ${status}">
-		<div class="profile-circle" style="background-color: ${getColorForUsername(user.userName)};  ${config.profile ? `background-image: url(/assets/avatar/users-${config.profile}.svg)` : ''}">
+		<div class="profile-circle" style="background-color: ${getColorForUsername(user.userName)};  ${config.profile ? `background-image: url(/assets/avatar/users-${config.profile}.png)` : ''}">
 			${!config.profile ? user && user.firstName ? user.firstName.charAt(0).toUpperCase() : '-' : ''}
 		</div>
 		<div>
@@ -394,14 +400,6 @@ function editMessage(id, msg, tools={}, allMsg){
 }
 
 function likeMessage (id, _tools){
-	let likeList = null;
-	try{
-		likeList = JSON.parse(localStorage.getItem("likeList") || "[]") || []
-	} catch(e){
-		likeList = {};
-	}
-
-	
 	let tools = null;
 	try{
 		if(typeof _tools === "string")
@@ -412,24 +410,16 @@ function likeMessage (id, _tools){
 		tools = {};
 	}
 	
-	
-	const liked = likeList.indexOf(id);
 	if(!(tools && tools.like)) {
-		tools["like"] = 0;
+		tools["like"] = [];
 	}
+	const liked = tools.like.findIndex(_i=>_i.userId === curentUser.userId)
+	// console.log( liked, JSON.stringify(tools),id, JSON.stringify(_tools) )
 	if(liked > -1) {
-		likeList.splice(liked,1);
-		if(!tools.like) {
-		    tools["like"] = 0;
-		} else {
-			tools.like -=1;
-		}
+		tools.like.splice(liked, 1);
 	} else {
-		likeList.push(id)
-		tools["like"] +=1;
+		tools["like"].push(curentUser);
 	}
-	localStorage.setItem("likeList",JSON.stringify(likeList));
-	
 	
 	connection.invoke("UpdateTools", id, JSON.stringify(tools)).catch(err => console.error(err.toString()));
 }
@@ -455,15 +445,9 @@ function createPost(user, message) {
 	} catch(e){
 		tools = {};
 	}
+	if(!tools["like"]) tools["like"] = []
 	
-	let likeList = null;
-	try{
-		likeList = JSON.parse(localStorage.getItem("likeList") || "[]") || []
-	} catch(e){
-		likeList = {};
-	}
-	
-	const liked = likeList.indexOf(message.id) > -1;
+	const liked = tools.like.findIndex(_i=>_i.userId === curentUser.userId) > -1;
 	
 	let div = document.createElement("div");
 	div.innerHTML = message.message;
@@ -480,7 +464,7 @@ function createPost(user, message) {
 	}
 	
 	li.innerHTML = `
-		<div class="profile-circle" style="background-color: ${color}; ${config.profile ? `background-image: url(/assets/avatar/users-${config.profile}.svg)` : ''}">
+		<div class="profile-circle" style="background-color: ${color}; ${config.profile ? `background-image: url(/assets/avatar/users-${config.profile}.png)` : ''}">
 			${!config.profile ? user.firstName.charAt(0).toUpperCase() : ''}
 		</div>
 		<div class="message-content" >
@@ -494,33 +478,105 @@ function createPost(user, message) {
 		<div class="message-tools">
 			<i onclick='replaymessage("${message.id}","${user.firstName} ${user.lastName}",${JSON.stringify(mainmsg)})' class="fa fa-reply"></i>
 			${user && curentUser && user.userId === curentUser.userId ? `<i onclick='editMessage("${message.id}",${JSON.stringify(mainmsg)},${JSON.stringify(tools || {})})' class="fa fa-edit"></i>` : ``}
-			${user && curentUser && user.userId === curentUser.userId ? `<i style="color:${liked ? '#f00' : null}" class="fa fa-heart"> ${tools.like || 0} </i>` : `<i onclick='likeMessage("${message.id}", ${JSON.stringify(tools)})' style="color:${liked ? '#f00' : null}" class="fa fa-heart"> ${tools.like || 0} </i>`}
+			${user && curentUser && user.userId === curentUser.userId ? `<i ${tools.like && tools.like.length ? `onclick="showUserListLiked('ulike-${message.id}')"`:''} style="color:${liked ? '#030' : null}" class="fa fa-heart"> ${tools.like ? tools.like.length : 0} </i><ol style="display:none" id="ulike-${message.id}" class="user-list-like">${tools.like?tools.like.map(_i=>`<li>${_i.firstName} ${_i.lastName}</li>`).join('') : ''}</ul>` : `<i onclick='likeMessage("${message.id}", ${JSON.stringify(tools)})' style="color:${liked ? '#f00' : null}" class="fa fa-heart"> ${tools.like ? tools.like.length : 0} </i>`}
 		</div>
 	`;
 			
 	return li;
 }
 
+function createSpace(_text, id=""){
+	const li = document.createElement("div");
+	li.className = "message-space";
+	li.innerHTML = `<a href="#${id || name}">${_text}<a>`
+	return li
+}
+
+function toggle(){
+	if(toggleId && document.getElementById(toggleId)){
+		if(document.getElementById(toggleId).style.display==="none") {
+			setTimeout(()=>{
+				document.getElementById(toggleId).style.display="block"
+			},10);
+		} else {
+			document.getElementById(toggleId).style.display="none";
+			toggleId = null;
+		}
+	}
+}
+function showUserListLiked(id){
+	if(toggleId && document.getElementById(toggleId)){
+		document.getElementById(toggleId).style.display="none";
+		toggleId = null;
+	}
+	toggleId = id;
+	toggle();
+}
+function showEmojiList(){
+	if(toggleId && document.getElementById(toggleId)){
+		document.getElementById(toggleId).style.display="none";
+		toggleId = null;
+	}
+	toggleId = "list-emoji";
+	toggle();
+}
+function showStickerList(){
+	if(toggleId && document.getElementById(toggleId)){
+		document.getElementById(toggleId).style.display="none";
+		toggleId = null;
+	}
+	toggleId = "list-sticker";
+	toggle();
+}
+
+document.addEventListener('click', event => {
+	if(document.getElementById(toggleId)) {
+	  const isClickInside = document.getElementById(toggleId).contains(event.target)
+
+	  if (!isClickInside && document.getElementById(toggleId).style.display=="block") {
+		  
+		toggle();
+	  }
+	}
+})
+
+function gotoBottom(){
+	document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
+}
 
 function addConcectionEvents(){
 	if(connection) {
 		connection.on("ReceiveMessage", (user, message) => {
 			const li = createPost(user, message);
 			document.getElementById("messagesList").appendChild(li);
-			document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
 			messageSound.play();
+			setTimeout(()=>{gotoBottom()}, 100);
+			
+			if (document.hidden) {
+				unreadMessage +=1;
+				document.title = '🚨 ('+unreadMessage+ ') new message ....';
+			}
 			
 		});
 		
 		
 		connection.on("ReceiveMessageHistory", (messages) => {
 			    document.getElementById("messagesList").innerHTML = '';
+				let date= "";
 				for(let j=messages.length - 1;j>=0;j--) {
-					
+					const _date = new Date(messages[j].timestamp).toDateString();
+					if(date !== _date) {
+						date = _date;
+	                    const name = "sp-"+Math.random();
+						const li = document.createElement("div");
+						 li.id = name;
+				        document.getElementById("messagesList").appendChild(li);
+				        document.getElementById("messagesList").appendChild(createSpace(date, name));
+					}
 				   document.getElementById("messagesList").appendChild(createPost(messages[j].user, messages[j]));
 				}
 				
-				document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
+			    setTimeout(()=>{gotoBottom()}, 500);
 			
 		});
 		
@@ -532,7 +588,7 @@ function addConcectionEvents(){
 				document.getElementById("msg-"+messages.id).innerHTML = li.innerHTML
 			} else {
 				document.getElementById("messagesList").appendChild(li);
-				document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight; 
+			    setTimeout(()=>{gotoBottom()}, 100);
 			}
 		});
 		
@@ -560,13 +616,35 @@ function addConcectionEvents(){
 
 
 
+if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+
 // Handle the visibilitychange event
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         console.log('Browser is minimized or tab is hidden');
-        UpdateStatus("busy")
+        UpdateStatus("busy");
+		
+		setTimeout(()=>{
+			if (document.hidden) {
+					// document.title = '🚨';
+					document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffff00'); // تغییر به زرد
+					document.body.style.backgroundColor = 'yellow';
+					if (Notification.permission === 'granted') {
+					  new Notification('لطفاً به صفحه بازگردید!');
+					}
+			}
+		}, 2500)
+		
+		
     } else {
         console.log('Browser is active');
-        UpdateStatus("")
+        UpdateStatus("");
+        document.title = 'Chat App';
+		unreadMessage = 0;
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff'); // بازگشت به سفید
+        document.body.style.backgroundColor = 'white';
     }
 });

@@ -165,6 +165,10 @@ a {
 .message-tools {
   direction: ltr;
   text-align: left;
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: space-between;
+	height: 100%;
 }
 
 .message-tools i {
@@ -239,6 +243,8 @@ a.r-msg {
   display: flex;
   border-top: 1px solid #dddddd;
   padding: 10px;
+  position: relative;
+  align-items: end;
 }
 
 .chat-input input {
@@ -277,7 +283,7 @@ a.r-msg {
   font-weight: bold;
   flex-shrink: 0;
   position: sticky;
-  top: 0;
+  top: 30px;
   background-size: 100%;
 }
 
@@ -323,16 +329,31 @@ a.r-msg {
 }
 
 .list-emoji {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  user-select: none;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	user-select: none;
+	position: absolute;
+	left: 10px;
+	width: 200px;
+	bottom: 35px;
+	background: #fff;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+	max-height: 230px;    
+	overflow: auto;
 }
 
 .list-emoji li {
   display: inline-block;
   cursor: pointer;
   margin: 3px 1px;
+}
+.list-emoji li img{
+  display: inline-block;
+  width: 30px;
+  margin: 5px;
 }
 
 .message.System {
@@ -348,7 +369,7 @@ a.r-msg {
   display: block;
   margin: 0;
   position: sticky;
-  top: 0;
+  top: 30px;
   backdrop-filter: blur(10px);
   text-shadow: 1px 1px 3px #fff;
 }
@@ -362,11 +383,12 @@ a.r-msg {
   text-align: center;
 }
 
-#sendButton {
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 22px;
+#sendButton {    
+   border-radius: 50%;
+   width: 40px;
+   height: 40px;
+   font-size: 16px;
+   padding: 0;
 }
 
 pre {
@@ -444,6 +466,24 @@ pre {
   opacity: 0.7;
   cursor: not-allowed;
   color: #888;
+}
+
+.user-list-like {
+    position: absolute;
+    background: rgba(250, 250, 250, 0.9);
+    border-radius: 5px;
+    margin: 0;
+	top: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+    max-height: 100px;
+    min-height: 30px;
+    overflow: auto;
+    width: 150px;
+    direction: rtl;
+    text-align: right;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+	font-size: 12px;
 }
 
 
@@ -539,17 +579,24 @@ div#settings-user ul li {
 }
 
 div#settings-user img {
-  border: 1px solid #000;
+  border: 2px solid #fff;
   border-radius: 50%;
   width: 50px;
+  box-shadow: 0 1px rgba(0, 0, 0, 0.5);
+  transition: 0.3s;
 }
 
 div#settings-user img:hover {
   background: #666;
+  filter: grayscale(0);
   cursor: pointer;
+  box-shadow: 0 3px rgba(0, 0, 0, 0.5);
+  transition: 0.3s;
 }
 
 div#settings-user {
+    overflow: auto;
+    max-height: 250px;
   padding: 10px;
   box-shadow: inset 0 0 150px 1px rgba(0, 0, 0, 0.3);
 }
@@ -558,3 +605,14 @@ div#settings-user>span:last-of-type {
   color: red;
   cursor: pointer;
 }
+.message-space{
+    position: sticky;
+    top: -10px;
+    z-index: 1;
+    background: #fff;
+    text-align: center;
+    font-size: 12px;
+    padding: 10px;
+    color: #999;
+}
+.message-space a{ background: #fff;color: #999 }
