@@ -18,7 +18,9 @@ namespace ChatHubs
         public ChatHub(IEasyCachingProvider cache)
         {
             _cache = cache;
+        
         }
+
         public async Task SendVoice(string user, byte[] audioData)
         {
             await Clients.All.SendAsync("ReceiveVoice", user, audioData);
@@ -213,8 +215,9 @@ namespace ChatHubs
             var user = GetUserInfo();
 
             await Clients.Caller.SendAsync("Profile", user);
-            await Clients.All.SendAsync("UpdateUserList", onlineUsers);
-
+            //await Clients.All.SendAsync("UpdateUserList", onlineUsers);
+            var userGroups = [];
+            // UserGroup
             await base.OnConnectedAsync();
         }
 
