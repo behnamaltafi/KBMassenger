@@ -12,11 +12,17 @@ public class ChatMessageService : IChatMessageService
     public async Task<ChatMessage> GetMessageByIdAsync(Guid id) =>
         await _messages.Find(message => message.Id == id).FirstOrDefaultAsync();
 
-    public async Task<IEnumerable<ChatMessage>> GetMessagesByGroupIdAsync(string groupId) =>
-        await _messages.Find(message => message.GroupId == groupId).ToListAsync();
+    public async Task<IEnumerable<ChatMessage>> GetMessagesByGroupIdAsync(string groupId, int pageNumber, int pageSize) =>
+        await _messages.Find(message => message.GroupId == groupId)
+                       .Skip((pageNumber - 1) * pageSize)
+                       .Limit(pageSize)
+                       .ToListAsync();
 
-    public async Task<IEnumerable<ChatMessage>> GetMessagesByUserIdAsync(string userId) =>
-        await _messages.Find(message => message.User.UserId == userId).ToListAsync();
+    public async Task<IEnumerable<ChatMessage>> GetMessagesByUserIdAsync(string userId, int pageNumber, int pageSize) =>
+        await _messages.Find(message => message.User.UserId == userId)
+                       .Skip((pageNumber - 1) * pageSize)
+                       .Limit(pageSize)
+                       .ToListAsync();
 
     public async Task CreateMessageAsync(ChatMessage message) =>
         await _messages.InsertOneAsync(message);

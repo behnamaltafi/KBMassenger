@@ -12,8 +12,11 @@ public class GroupService : IGroupService
     public async Task<Group> GetGroupByIdAsync(string groupId) =>
         await _groups.Find(group => group.Id == groupId).FirstOrDefaultAsync();
 
-    public async Task<IEnumerable<Group>> GetAllGroupsAsync() =>
-        await _groups.Find(group => true).ToListAsync();
+    public async Task<IEnumerable<Group>> GetGroupsAsync(int pageNumber, int pageSize) =>
+        await _groups.Find(group => true)
+                     .Skip((pageNumber - 1) * pageSize)
+                     .Limit(pageSize)
+                     .ToListAsync();
 
     public async Task CreateGroupAsync(Group group) =>
         await _groups.InsertOneAsync(group);
@@ -24,6 +27,9 @@ public class GroupService : IGroupService
     public async Task DeleteGroupAsync(string groupId) =>
         await _groups.DeleteOneAsync(group => group.Id == groupId);
 
-    public async Task<IEnumerable<Group>> GetGroupsByUserAsync(string userId) =>
-        await _groups.Find(group => group.Owner == userId).ToListAsync();
+    public async Task<IEnumerable<Group>> GetGroupsByUserAsync(string userId, int pageNumber, int pageSize) =>
+        await _groups.Find(group => group.Owner == userId)
+                     .Skip((pageNumber - 1) * pageSize)
+                     .Limit(pageSize)
+                     .ToListAsync();
 }

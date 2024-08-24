@@ -12,11 +12,17 @@ public class UserGroupService : IUserGroupService
     public async Task<UserGroup> GetUserGroupByIdAsync(string id) =>
         await _userGroups.Find(userGroup => userGroup.Id == id).FirstOrDefaultAsync();
 
-    public async Task<IEnumerable<UserGroup>> GetUserGroupsByUserIdAsync(string userId) =>
-        await _userGroups.Find(userGroup => userGroup.UserId == userId).ToListAsync();
+    public async Task<IEnumerable<UserGroup>> GetUserGroupsByUserIdAsync(string userId, int pageNumber, int pageSize) =>
+        await _userGroups.Find(userGroup => userGroup.UserId == userId)
+                         .Skip((pageNumber - 1) * pageSize)
+                         .Limit(pageSize)
+                         .ToListAsync();
 
-    public async Task<IEnumerable<UserGroup>> GetUserGroupsByGroupIdAsync(string groupId) =>
-        await _userGroups.Find(userGroup => userGroup.GroupId == groupId).ToListAsync();
+    public async Task<IEnumerable<UserGroup>> GetUserGroupsByGroupIdAsync(string groupId, int pageNumber, int pageSize) =>
+        await _userGroups.Find(userGroup => userGroup.GroupId == groupId)
+                         .Skip((pageNumber - 1) * pageSize)
+                         .Limit(pageSize)
+                         .ToListAsync();
 
     public async Task AddUserToGroupAsync(UserGroup userGroup) =>
         await _userGroups.InsertOneAsync(userGroup);
