@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace ChatHubs
+namespace SignalRIntro.Api.Infrastructure
 {
     public class ChatHub : Hub
     {
@@ -18,7 +18,7 @@ namespace ChatHubs
         public ChatHub(IEasyCachingProvider cache)
         {
             _cache = cache;
-        
+
         }
 
         public async Task SendVoice(string user, byte[] audioData)
@@ -65,7 +65,7 @@ namespace ChatHubs
                 Timestamp = oldMessage.Timestamp
             };
             UpdateMessageInCache(messageId, chatMessage);
-            
+
             await Clients.All.SendAsync("ReceiveMessageHistoryById", chatMessage);
 
 
@@ -85,7 +85,7 @@ namespace ChatHubs
                 Timestamp = message.Timestamp
             };
             UpdateMessageInCache(messageId, chatMessage);
-           
+
             await Clients.All.SendAsync("ReceiveMessageHistoryById", chatMessage);
 
 

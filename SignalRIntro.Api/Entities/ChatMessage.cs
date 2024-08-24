@@ -1,7 +1,11 @@
-﻿public class ChatMessage
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+public class ChatMessage
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public Guid Id { get; set; }
-   
     public string ReferenceId { get; set; }
     public string GroupId { get; set; }
     public string Message { get; set; }

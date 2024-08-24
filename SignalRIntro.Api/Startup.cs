@@ -1,7 +1,8 @@
-using ChatHubs;
 using EasyCaching.Core.Configurations;
 using MessagePack.Resolvers;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using SignalRIntro.Api.Infrastructure;
 
 public class Startup
 {
@@ -17,7 +18,23 @@ public class Startup
         services.AddCors();
         services.AddControllers();
         services.AddSignalR();
-        services.AddMemoryCache();
+        services.AddMemoryCache(); 
+
+
+        //MongoDb
+        var client = new MongoClient(Configuration.GetConnectionString("MongoDb"));
+        var database = client.GetDatabase("ChatAppDb");
+
+        // Registering services
+        services.AddSingleton(database);
+        services.AddScoped<IGroupService, GroupService>();
+        services.AddScoped<IUserGroupService, UserGroupService>();
+        services.AddScoped<IChatMessageService, ChatMessageService>();
+
+
+
+
+
         services.AddEasyCaching(options =>
         {
             var messagePackName = "mymsgpack";
